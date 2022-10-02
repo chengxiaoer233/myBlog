@@ -2,8 +2,9 @@ package model
 
 // 全局错误相关
 const (
-	Success = 200
-	Error   = 500
+	Success  = 200
+	Error    = 500
+	ErrInner = 600
 
 	// ERROR_USERNAME_USED code= 1000... 用户模块的错误
 	ErrUserNameUsed   = 1001
