@@ -14,9 +14,12 @@ func Init() {
 		panic(fmt.Sprintf("注意：配置文件读取错误，请检查文件路径:%s", err.Error()))
 	}
 
+	// 加载配置
 	loadServerConf(iniFile)
-
 	loadDbConf(iniFile)
+
+	// 初始化mysql配置
+	initDb()
 }
 
 // 加载服务器配置文件
