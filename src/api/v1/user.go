@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"myBlog/dao"
 	"myBlog/model"
 	"myBlog/utlis"
@@ -60,6 +61,29 @@ func AddUser(c *gin.Context) {
 
 // GetUserInfo 查询单个用户
 func GetUserInfo(c *gin.Context) {
+
+	var id int
+	var err error
+	if id ,err = strconv.Atoi(c.Param("id"));err != nil{
+		c.JSON(http.StatusOK,resp2Client(model.ErrInner,err.Error(),nil))
+		return
+	}
+
+	data,err := dao.UserInterface.GetUser(id)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		c.JSON(http.StatusOK,resp2Client(model.ErrInner,err.Error(),nil))
+		return
+
+	}else if err == gorm.ErrRecordNotFound{
+		c.JSON(http.StatusOK,resp2Client(model.ErrUserNotExists,model.GetErrMsg(model.ErrUserNotExists),nil))
+		return
+	}
+
+	// 信息返回，不用返回用户密码
+	data.Password = "********"
+
+	c.JSON(http.StatusOK,resp2Client(model.Success,model.GetErrMsg(model.Success),data))
+	return
 }
 
 // GetUsers 查询所有用户列表
@@ -113,5 +137,47 @@ func ChangeUserPassword(c *gin.Context) {
 }
 
 // DeleteUser 删除用户
+// 这里采用delete + json方式，需要用户携带密码才可以删除
 func DeleteUser(c *gin.Context) {
+
+	// 定义内部变量
+	type Req struct {
+		Id 		 int 	`json:"id"`
+		PassWord string `json:"passWord"`
+	}
+
+	// json解析
+	var req Req
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(http.StatusOK,resp2Client(model.ErrInner,err.Error(),nil))
+		return
+	}
+
+	// 查询单个用户
+	data,err := dao.UserInterface.GetUser(req.Id)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		c.JSON(http.StatusOK,resp2Client(model.ErrInner,err.Error(),nil))
+		return
+
+	}else if err == gorm.ErrRecordNotFound{
+		c.JSON(http.StatusOK,resp2Client(model.ErrUserNotExists,model.GetErrMsg(model.ErrUserNotExists),nil))
+		return
+	}
+
+	// 用户存在，需要判断秘钥是否正确
+	code,err := utlis.CompareHashAndPassword([]byte(data.Password),[]byte(req.PassWord))
+	if code == model.ErrInner {
+		c.JSON(http.StatusOK,resp2Client(code,err.Error(),nil))
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusOK,resp2Client(model.ErrTokenWrong,model.GetErrMsg(model.ErrTokenWrong),nil))
+		return
+	}
+
+	// 直接删除用户
+	code,err = dao.UserInterface.DeleteUser(req.Id)
+	c.JSON(http.StatusOK,resp2Client(code,err.Error(),nil))
+	return
 }

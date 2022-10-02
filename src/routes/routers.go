@@ -31,6 +31,7 @@ func InitRouters() {
 		routerV1 = routerV1.Group("user")
 		{
 			routerV1.POST("add", v1.AddUser)
+			routerV1.DELETE("/",v1.DeleteUser)
 			routerV1.GET("/:id", v1.GetUserInfo)
 			routerV1.GET("/users", v1.GetUsers)
 		}
