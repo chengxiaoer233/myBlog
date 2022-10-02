@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"myBlog/dao"
+	"myBlog/routes"
+)
 
 func main() {
-	fmt.Println("hello")
+
+	dao.Init()
+
+	routes.InitRouters()
 }
