@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"myBlog/model"
-	"fmt"
 )
 
 var UserInterface SqlUser
@@ -58,9 +57,20 @@ func (u *SqlUser) CreateUser(data *model.User) (int, error) {
 }
 
 // GetUserInfo 根据id查询单个用户信息
-func (u *SqlUser) GetUser(id int)(user *model.User,err error){
+func (u *SqlUser) GetUserById(id int)(user *model.User,err error){
 	err = Db.Where("id = ?",id).First(&user).Error
-	fmt.Println("user=",user,",err=",err)
+	return
+}
+
+// GetUserInfo 根据userName查询单个用户信息
+func (u *SqlUser) GetUsersByName(userName string)(user []model.User,err error){
+	err = Db.Where("userName = ?",userName).Find(&user).Error
+	return
+}
+
+// 根据用户id和用户名来更新用户信息
+func (u *SqlUser) GetUserInfoByIdAndName (id int,name string)(user *model.User,err error){
+	err = Db.Where("id = ? and userName = ?",id,name).First(&user).Error
 	return
 }
 
@@ -111,4 +121,17 @@ func (u *SqlUser) DeleteUser(id int)(int,error){
 	}
 
 	return model.Success,errors.New("ok")
+}
+
+func (u *SqlUser) EditUser(data *model.User)(code int ,err error){
+
+	var maps = make(map[string]interface{})
+	maps["username"] = data.UserName
+	maps["role"] = data.Role
+	err = Db.Model(&data).Where("id = ? ", data.ID).Updates(maps).Error
+	if err != nil {
+		return model.ErrInner,err
+	}
+
+	return model.Success,nil
 }

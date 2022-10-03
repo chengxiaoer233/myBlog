@@ -31,7 +31,6 @@ func InitRouters() {
 		routerV1 = routerV1.Group("user")
 		{
 			routerV1.POST("add", v1.AddUser)
-			routerV1.DELETE("/",v1.DeleteUser)
 			routerV1.GET("/:id", v1.GetUserInfo)
 			routerV1.GET("/users", v1.GetUsers)
 		}
@@ -49,6 +48,18 @@ func InitRouters() {
 			routerV1.GET("/", v1.GetArt)
 			routerV1.GET("/list/:id", v1.GetCateArt)
 			routerV1.GET("/info/:id", v1.GetArtInfo)
+		}
+	}
+
+	// admin后台相关接口
+	routerAdmin := r.Group("api/v1/admin")
+	{
+		// 用户模块
+		routerAdmin = routerAdmin.Group("user")
+		{
+			routerAdmin.GET("/users", v1.GetUsers)
+			routerAdmin.DELETE("/",v1.DeleteUser)
+			routerAdmin.PUT("/",v1.EditUser)
 		}
 	}
 

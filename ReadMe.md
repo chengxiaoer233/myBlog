@@ -40,6 +40,7 @@ vue + golang + mysql 实现一个博客
 #### p6
 - 删除用户改为 delete + json body，需要校验密码，同时需要校验要用户是否已经存在 
 - 完善各种异常或错误逻辑，满足一个线上代码的要求
+- 用户编辑接口，增加校验逻辑，校验用户名是否存在及用户id是否匹配一致
 
 ## 接口测试方法
 
@@ -81,7 +82,7 @@ curl "localhost:3000/api/v1/user/users"
 
 - 3：删除单个用户  DeleteUser
 ```shell script
-Path: /api/v1/user/
+Path: /api/v1/admin/user/
 Method: delete 
 Header: "Content-Type:application/json"
 
@@ -89,7 +90,7 @@ payload示例:
   {"id":1,"password":"666"}
 
 curl请求示例: 
-curl -X DELETE localhost:3000/api/v1/user/ -d '{"id":1,"password":"666"}' -H "Content-Type:application/json"
+curl -X DELETE localhost:3000/api/v1/admin/user/ -d '{"id":1,"password":"666"}' -H "Content-Type:application/json"
 
 返回示例:
 {"status":1006,"msg":"TOKEN不正确,请重新登陆","data":null}%
@@ -110,4 +111,20 @@ curl localhost:3000/api/v1/user/1
 "DeletedAt":null,"userName":"test","password":"********","role":0}}
 
 {"status":1003,"msg":"用户不存在","data":null}
+```
+
+- 5：编辑用户信息
+```shell script
+Path: api/v1/admin/user
+Method: PUT 
+payload示例:
+  {"id":1,"userName":"666"}
+
+curl请求示例
+curl -X PUT localhost:3000/api/v1/admin/user/ -d '{"id":1,"userName":"666","role":2}' -H "Content-Type:application/json"
+
+返回结果示例
+{"status":1001,"msg":"用户名已存在！","data":null}
+
+{"status":200,"msg":"OK","data":null}
 ```
