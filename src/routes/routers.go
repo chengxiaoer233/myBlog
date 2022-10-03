@@ -60,8 +60,8 @@ func InitRouters() {
 		routerV1Cate := routerV1.Group("category")
 		{
 			// 查询单个分类、查询所有分类
-			routerV1Cate.GET("/", v1.GetCateS)
 			routerV1Cate.GET("/:id", v1.GetCateInfo)
+			routerV1Cate.GET("/", v1.GetCateS)
 		}
 
 		//  文章模块
@@ -104,7 +104,6 @@ func InitRouters() {
 			routerAdminArticle.POST("/add", v1.AddArticle)
 			routerAdminArticle.DELETE("/:id", v1.DeleteArticle)
 			routerAdminArticle.PUT("/:id", v1.EditArticle)
-		//	routerAdminArticle.GET("/", v1.GetCateS)
 		}
 	}
 
