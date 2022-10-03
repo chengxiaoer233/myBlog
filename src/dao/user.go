@@ -28,21 +28,21 @@ func (u *SqlUser) CheckUser(name string) (int, error) {
 }
 
 // 删除用户之前的用户信息校验,判断是否存在及合法
-func (u *SqlUser)CheckUserBeforeDelete(id int,password string)(int,error){
+func (u *SqlUser) CheckUserBeforeDelete(id int, password string) (int, error) {
 
 	var user model.User
-	err := Db.Where("id = ? and password = ?",id,password).First(&user).Error
-	if err != nil && err != gorm.ErrRecordNotFound{
-		return model.ErrInner,err
+	err := Db.Where("id = ? and password = ?", id, password).First(&user).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return model.ErrInner, err
 	}
 
 	// 存在且信息都正确
 	if user.ID > 0 {
-		return model.Success,nil
+		return model.Success, nil
 	}
 
 	// 不存在该用户信息
-	return model.ErrUserNameOrPwWrong ,errors.New(model.GetErrMsg(model.ErrUserNameOrPwWrong))
+	return model.ErrUserNameOrPwWrong, errors.New(model.GetErrMsg(model.ErrUserNameOrPwWrong))
 }
 
 // CreateUser 新增用户
@@ -57,20 +57,20 @@ func (u *SqlUser) CreateUser(data *model.User) (int, error) {
 }
 
 // GetUserInfo 根据id查询单个用户信息
-func (u *SqlUser) GetUserById(id int)(user *model.User,err error){
-	err = Db.Where("id = ?",id).First(&user).Error
+func (u *SqlUser) GetUserById(id int) (user *model.User, err error) {
+	err = Db.Where("id = ?", id).First(&user).Error
 	return
 }
 
 // GetUserInfo 根据userName查询单个用户信息
-func (u *SqlUser) GetUsersByName(userName string)(user []model.User,err error){
-	err = Db.Where("userName = ?",userName).Find(&user).Error
+func (u *SqlUser) GetUsersByName(userName string) (user []model.User, err error) {
+	err = Db.Where("userName = ?", userName).Find(&user).Error
 	return
 }
 
 // 根据用户id和用户名来更新用户信息
-func (u *SqlUser) GetUserInfoByIdAndName (id int,name string)(user *model.User,err error){
-	err = Db.Where("id = ? and userName = ?",id,name).First(&user).Error
+func (u *SqlUser) GetUserInfoByIdAndName(id int, name string) (user *model.User, err error) {
+	err = Db.Where("id = ? and userName = ?", id, name).First(&user).Error
 	return
 }
 
@@ -112,26 +112,26 @@ func (u *SqlUser) GetUsers(userName string, pageSize int, pageNum int) (users []
 }
 
 // DeleteUser 删除用户列表，改用delete + json body的方式，需要前端携带密码
-func (u *SqlUser) DeleteUser(id int)(int,error){
+func (u *SqlUser) DeleteUser(id int) (int, error) {
 
 	// 这里采用的是硬删除的方式，gorm默认是软删除
-	err := Db.Where("id = ?",id).Unscoped().Delete(&model.User{}).Error
-	if err != nil{
-		return model.ErrInner,err
+	err := Db.Where("id = ?", id).Unscoped().Delete(&model.User{}).Error
+	if err != nil {
+		return model.ErrInner, err
 	}
 
-	return model.Success,errors.New("ok")
+	return model.Success, errors.New("ok")
 }
 
-func (u *SqlUser) EditUser(data *model.User)(code int ,err error){
+func (u *SqlUser) EditUser(data *model.User) (code int, err error) {
 
 	var maps = make(map[string]interface{})
 	maps["username"] = data.UserName
 	maps["role"] = data.Role
 	err = Db.Model(&data).Where("id = ? ", data.ID).Updates(maps).Error
 	if err != nil {
-		return model.ErrInner,err
+		return model.ErrInner, err
 	}
 
-	return model.Success,nil
+	return model.Success, nil
 }

@@ -43,7 +43,7 @@ vue + golang + mysql 实现一个博客
 - 用户编辑接口，增加校验逻辑，校验用户名是否存在及用户id是否匹配一致
 
 ## 接口测试方法
-
+- 用户管理
 - 1: 新增用户 AddUser
 ```shell script
 Path: /api/v1/user/add
@@ -62,25 +62,7 @@ curl请求示例:
 {"status":1001,"msg":"用户名已存在！","data":null}
 ```
 
-- 2：查询所有用户 GetUsers
-```shell script
-Path: /api/v1/user/users
-Method: get 
-
-curl请求带参数示例
-curl "localhost:3000/api/v1/user/users?pageSize=1&pageNum=1&userName=test"
-
-curl请求不带参数示例
-curl "localhost:3000/api/v1/user/users"
-
-返回示例: 
-{"data":[],"msg":"OK","status":200,"total":0}
-
-{"data":[{"ID":1,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"userName":"666",
-"password":"***","role":0}],"msg":"OK","status":200,"total":1}
-```
-
-- 3：删除单个用户  DeleteUser
+- 2：删除单个用户  DeleteUser
 ```shell script
 Path: /api/v1/admin/user/
 Method: delete 
@@ -98,7 +80,23 @@ curl -X DELETE localhost:3000/api/v1/admin/user/ -d '{"id":1,"password":"666"}' 
 {"status":200,"msg":"ok","data":null}
 ```
 
-- 4：查询单个用户信息 GetUserInfo
+- 3：修改用户信息
+```shell script
+Path: api/v1/admin/user
+Method: PUT 
+payload示例:
+  {"id":1,"userName":"666"}
+
+curl请求示例
+curl -X PUT localhost:3000/api/v1/admin/user/ -d '{"id":1,"userName":"666","role":2}' -H "Content-Type:application/json"
+
+返回结果示例
+{"status":1001,"msg":"用户名已存在！","data":null}
+
+{"status":200,"msg":"OK","data":null}
+```
+
+- 4：查询单个用户信息 GetOneUserInfo
 ```shell script
 Path: /api/v1/user/:id
 Method: get 
@@ -113,18 +111,95 @@ curl localhost:3000/api/v1/user/1
 {"status":1003,"msg":"用户不存在","data":null}
 ```
 
-- 5：编辑用户信息
+- 5：查询所有用户 GetUsers
 ```shell script
-Path: api/v1/admin/user
-Method: PUT 
+Path: /api/v1/user/users
+Path: /api/v1/admin/user/users
+Method: get 
+
+curl请求带参数示例
+curl "localhost:3000/api/v1/user/users?pageSize=1&pageNum=1&userName=test"
+curl "localhost:3000/api/v1/admin/user/users?pageSize=1&pageNum=1&userName=test"
+
+curl请求不带参数示例
+curl "localhost:3000/api/v1/user/users"
+
+返回示例: 
+{"data":[],"msg":"OK","status":200,"total":0}
+
+{"data":[{"ID":1,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"userName":"666",
+"password":"***","role":0}],"msg":"OK","status":200,"total":1}
+```
+
+- 文章分类
+- 1：新增文章分类
+```shell script
+Path: api/v1/admin/category/add
+Method: POST 
 payload示例:
-  {"id":1,"userName":"666"}
+  {"name":"666"}
 
-curl请求示例
-curl -X PUT localhost:3000/api/v1/admin/user/ -d '{"id":1,"userName":"666","role":2}' -H "Content-Type:application/json"
+curl示例
+curl -X POST localhost:3000/api/v1/admin/category/add -d '{"name":"666"}' -H "Content-Type:application/json"
 
-返回结果示例
-{"status":1001,"msg":"用户名已存在！","data":null}
-
+返回示例
 {"status":200,"msg":"OK","data":null}
+
+{"status":3001,"msg":"该分类已存在","data":null}
+```
+- 2：删除文章分类
+```shell script
+Path: api/v1/admin/category/:ID
+Method: DELETE 
+
+curl示例
+curl -X DELETE localhost:3000/api/v1/admin/category/1
+
+返回示例
+{"status":200,"msg":"OK","data":null}
+
+{"status":3002,"msg":"该分类不存在","data":null}
+```
+- 3：编辑文章分类
+```shell script
+Path: api/v1/admin/category/:ID
+Method: PUT 
+
+curl示例
+curl -X PUT localhost:3000/api/v1/admin/category/1 -d '{"name":"666"}' -H "Content-Type:application/json"
+
+返回示例
+{"status":200,"msg":"OK","data":null}
+
+{"status":3002,"msg":"该分类不存在","data":null}
+```
+
+- 4：返回某个分类
+```shell script
+Path: api/v1/category/:ID
+Method: GET 
+
+curl示例
+curl localhost:3000/api/v1/category/1
+
+返回示例
+{"status":200,"msg":"OK","data":{"ID":2,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":"666"}}
+
+{"status":3002,"msg":"该分类不存在","data":null}
+```
+
+- 5：返回所有分类
+```shell script
+Path: api/v1/category/
+Path: api/v1/admin/category/
+Method: GET 
+
+curl示例
+curl localhost:3000/api/v1/category/
+curl localhost:3000/api/v1/admin/category/
+
+返回示例
+{"data":[{"ID":2,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":"666"}],"msg":"OK","status":200,"total":1}
+
+{"data":[],"msg":"OK","status":200,"total":0}
 ```
