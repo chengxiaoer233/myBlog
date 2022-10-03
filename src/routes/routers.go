@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	v1 "myBlog/api/v1"
+	"myBlog/middleware"
 	"myBlog/model"
 )
 
@@ -20,8 +21,27 @@ func InitRouters() {
 	// setMode
 	gin.SetMode(model.ServerConf.AppMode)
 
-	// 采用默认的gin 中间件
-	r := gin.Default()
+	r := gin.New()
+	// 设置信任网络 []string
+	// nil 为不计算，避免性能消耗，上线应当设置
+	_ = r.SetTrustedProxies(nil)
+
+	r.HTMLRender = createMyRender()
+	r.Use(middleware.Logger())
+	r.Use(gin.Recovery())
+	r.Use(middleware.Cors())
+
+	r.Static("/static", "./web/front/dist/static")
+	r.Static("/admin", "./web/admin/dist")
+	r.StaticFile("/favicon.ico", "/web/front/dist/favicon.ico")
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(200, "front", nil)
+	})
+
+	r.GET("/admin", func(c *gin.Context) {
+		c.HTML(200, "admin", nil)
+	})
 
 	// 采用路由组的形式来阻止路由关系
 	// 前端展示页面
@@ -73,6 +93,16 @@ func InitRouters() {
 			routerAdminCate.DELETE("/:id", v1.DeleteCate)
 			routerAdminCate.PUT("/:id", v1.EditCate)
 			routerAdminCate.GET("/", v1.GetCateS)
+		}
+
+		// 文章模块
+		routerAdminArticle := routerAdmin.Group("article")
+		{
+			// 添加文章、删除文章、修改文章、查询文章
+			routerAdminArticle.POST("/add", v1.AddArticle)
+			routerAdminArticle.DELETE("/:id", v1.DeleteArticle)
+			routerAdminArticle.PUT("/:id", v1.EditArticle)
+		//	routerAdminArticle.GET("/", v1.GetCateS)
 		}
 	}
 

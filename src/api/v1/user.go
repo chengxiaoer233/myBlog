@@ -18,6 +18,7 @@ type resp struct {
 }
 
 func resp2Client(code int, msg string, data interface{}) resp {
+
 	return resp{
 		Status: code,
 		Msg:    msg,

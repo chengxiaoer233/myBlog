@@ -19,6 +19,7 @@ const (
 
 	// code= 2000... 文章模块的错误
 	ErrArtNotExists = 2001
+	ErrArtExists    = 2002
 
 	// code= 3000... 分类模块的错误
 	ErrCateNameUsed  = 3001
@@ -39,6 +40,7 @@ var Err2Msg = map[int]string{
 	ErrUserNoRight:       "该用户无权限",
 
 	ErrArtNotExists: "文章不存在",
+	ErrArtExists:   "文章已经存在",
 
 	ErrCateNameUsed:  "该分类已存在",
 	ErrCateNotExists: "该分类不存在",
