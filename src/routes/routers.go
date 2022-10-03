@@ -28,38 +28,51 @@ func InitRouters() {
 	routerV1 := r.Group("api/v1")
 	{
 		// 用户模块
-		routerV1 = routerV1.Group("user")
+		routerV1User := routerV1.Group("user")
 		{
-			routerV1.POST("add", v1.AddUser)
-			routerV1.GET("/:id", v1.GetUserInfo)
-			routerV1.GET("/users", v1.GetUsers)
+			// 增加用户、查询单个用户、查询所有用户
+			routerV1User.POST("add", v1.AddUser)
+			routerV1User.GET("/:id", v1.GetOneUserInfo)
+			routerV1User.GET("/users", v1.GetUsers)
 		}
 
 		// 分类模块
-		routerV1 = routerV1.Group("category")
+		routerV1Cate := routerV1.Group("category")
 		{
-			routerV1.POST("/", v1.GetCate)
-			routerV1.GET("/:id", v1.GetCateInfo)
+			// 查询单个分类、查询所有分类
+			routerV1Cate.GET("/", v1.GetCateS)
+			routerV1Cate.GET("/:id", v1.GetCateInfo)
 		}
-
+/*
 		//  文章模块
 		routerV1 = routerV1.Group("article")
 		{
 			routerV1.GET("/", v1.GetArt)
 			routerV1.GET("/list/:id", v1.GetCateArt)
 			routerV1.GET("/info/:id", v1.GetArtInfo)
-		}
+		}*/
 	}
 
 	// admin后台相关接口
 	routerAdmin := r.Group("api/v1/admin")
 	{
 		// 用户模块
-		routerAdmin = routerAdmin.Group("user")
+		routerAdminUser := routerAdmin.Group("user")
 		{
-			routerAdmin.GET("/users", v1.GetUsers)
-			routerAdmin.DELETE("/",v1.DeleteUser)
-			routerAdmin.PUT("/",v1.EditUser)
+			// 删除某个用户、修改某个用户信息、查询所有用户信息
+			routerAdminUser.DELETE("/", v1.DeleteUser)
+			routerAdminUser.PUT("/", v1.EditUser)
+			routerAdminUser.GET("/users", v1.GetUsers)
+		}
+
+		// 分类模块
+		routerAdminCate := routerAdmin.Group("category")
+		{
+			// 增加分类、删除分类、修改分类、查询分类
+			routerAdminCate.POST("/add", v1.AddCategory)
+			routerAdminCate.DELETE("/:id", v1.DeleteCate)
+			routerAdminCate.PUT("/:id", v1.EditCate)
+			routerAdminCate.GET("/", v1.GetCateS)
 		}
 	}
 

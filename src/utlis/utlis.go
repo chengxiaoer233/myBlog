@@ -24,13 +24,13 @@ func GenerateFromPassword(password string) (string, error) {
 
 // 判断密码是否正确
 // password为输入密码，hashedPassword为已经保存的密码
-func CompareHashAndPassword(hashedPassword, password []byte)(int,error){
+func CompareHashAndPassword(hashedPassword, password []byte) (int, error) {
 
-	hashPw,err := base64.StdEncoding.DecodeString(string(hashedPassword))
+	hashPw, err := base64.StdEncoding.DecodeString(string(hashedPassword))
 	if err != nil {
-		return model.ErrInner,err
+		return model.ErrInner, err
 	}
 
-	err = bcrypt.CompareHashAndPassword(hashPw,password)
-	return model.Success,err
+	err = bcrypt.CompareHashAndPassword(hashPw, password)
+	return model.Success, err
 }
