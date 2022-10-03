@@ -187,13 +187,13 @@ func GetOneUserInfo(c *gin.Context) {
 // GetUsers 查询所有用户列表
 func GetUsers(c *gin.Context) {
 
-	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	pageSize, err := strconv.Atoi(c.DefaultQuery("pagesize", "10"))
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
 	}
 
-	pageNum, err := strconv.Atoi(c.DefaultQuery("pageNum", "1"))
+	pageNum, err := strconv.Atoi(c.DefaultQuery("pagenum", "1"))
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return

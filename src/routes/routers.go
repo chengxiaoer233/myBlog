@@ -63,14 +63,16 @@ func InitRouters() {
 			routerV1Cate.GET("/", v1.GetCateS)
 			routerV1Cate.GET("/:id", v1.GetCateInfo)
 		}
-/*
+
 		//  文章模块
-		routerV1 = routerV1.Group("article")
+		routerV1Article := routerV1.Group("article")
 		{
-			routerV1.GET("/", v1.GetArt)
-			routerV1.GET("/list/:id", v1.GetCateArt)
-			routerV1.GET("/info/:id", v1.GetArtInfo)
-		}*/
+			// 查询单个、查询所有、查询某个分类下的所有文章
+			routerV1Article.GET("/info/:id", v1.GetOneArtInfo)
+			routerV1Article.GET("/", v1.GetArts)
+			routerV1Article.GET("/list/:id", v1.GetCateArt)
+
+		}
 	}
 
 	// admin后台相关接口
