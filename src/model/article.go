@@ -10,6 +10,6 @@ type Article struct {
 	Desc         string `json:"desc"    gorm:"type:varchar(200)"`
 	Content      string `json:"content" gorm:"type:longtext"`
 	Img          string `json:"img"     gorm:"type:varchar(100)"`
-	CommentCount int    `json:"commentCount" gorm:"type:int;not null;default:0"`
-	ReadCount    int    `json:"readCount"    gorm:"type:int;not null;default:0"`
+	CommentCount int    `json:"comment_count" gorm:"type:int;not null;default:0"`
+	ReadCount    int    `json:"read_count"    gorm:"type:int;not null;default:0"`
 }

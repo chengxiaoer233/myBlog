@@ -46,212 +46,537 @@ vue + golang + mysql 实现一个博客
 - 完善文章分类模块的编写，并实现工程化
 
 ### p8
-- 完善文章相关接口
-
+- 完善文章相关接口,重新组织readme文档，增加接口调用相关规则
+&emsp; 
 
 ## 接口测试方法
-- 用户管理
-- 1: 新增用户 AddUser
-```shell script
-Path: /api/v1/user/add
-Method: post 
-Header: "Content-Type:application/json"
+- **用户管理相关接口**
 
-payload示例:
-  {"userName":"666","password":"666","role":0}
+* 1: **新增用户** ```AddUser```
+    
+    - Path:   ```/api/v1/user/add```
+    - Method: ```POST```
+    - payload示例
+    ```shell script
+     {
+         "userName": "666",
+         "password": "666",
+         "role": 0
+     }
+    ```
+    &emsp; 
+    
+    -  curl请求示例
+    ```shell script
+      curl -X POST "localhost:3000/api/v1/user/add" -d '{"userName":"test666","password":"test666","role":0}' -H "Content-Type:application/json"
+    ```
+    &emsp; 
+    
+    - 返回示例
+    ```json
+      {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+      }
+    ```
+    &emsp; 
+    
+* 2: **删除单个用户** ```DeleteUser```
+    
+    - Path:   ```/api/v1/admin/user/```
+    - Method: ```DELETE```
+    - Header: ```"Content-Type:application/json"```
+    - payload示例
+    ```shell script
+     {
+     	"id": 1,
+     	"password": "666"
+     }
+    ```
+    &emsp; 
+  
+    - curl请求示例
+    ```shell script
+      curl -X DELETE localhost:3000/api/v1/admin/user/ -d '{"id":1,"password":"666"}' -H "Content-Type:application/json"
+    ```
+    &emsp; 
+    
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ```
+    &emsp; 
+    
+* 3: **修改用户信息** ```EditUser```
 
-curl请求示例: 
-  curl -X POST "localhost:3000/api/v1/user/add" -d '{"userName":"test666","password":"test666","role":0}' -H "Content-Type:application/json"
+    - Path:   ```api/v1/admin/user```
+    - Method: ```PUT```
+    - payload示例
+    ```shell script
+     {
+     	"id": 1,
+     	"password": "666"
+     }
+    ```
+    &emsp; 
+  
+    - curl请求示例
+    ```shell script
+      curl -X PUT localhost:3000/api/v1/admin/user/ -d '{"id":1,"userName":"666","role":2}' -H "Content-Type:application/json"
+    ```
+    &emsp;
+     
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ```  
+    &emsp; 
+    
+ * 4: **查询单个用户信息** ```GetOneUserInfo```
+     
+     - Path:   ```/api/v1/user/:id```
+     - Method: ```GET```
+     &emsp; 
+     
+     - curl请求示例
+     ```shell script
+       curl localhost:3000/api/v1/user/1
+     ```
+     &emsp;
+     
+     - 返回示例
+     ```json
+     {
+     	"status": 200,
+     	"msg": "OK",
+     	"data": {
+     		"ID": 1,
+     		"CreatedAt": "***",
+     		"UpdatedAt": "***",
+     		"DeletedAt": null,
+     		"userName": "test",
+     		"password": "********",
+     		"role": 0
+     	}
+     }
+    ```
+    &emsp; 
+   
+ * 5: **查询所有用户** ```GetUsers```
+     
+     - Path:   ```/api/v1/user/users```
+     - Path:   ```/api/v1/admin/user/users```
+     - Method: ```GET```
+     - Query参数：```pagesize,pagenum```
+     &emsp; 
+     
+     - curl请求示例
+     ```shell script
+       curl "localhost:3000/api/v1/user/users?pageSize=1&pageNum=1&userName=test"
+       curl "localhost:3000/api/v1/admin/user/users?pageSize=1&pageNum=1&userName=test"
+       curl "localhost:3000/api/v1/user/users"
+     ```
+     &emsp; 
+     
+     - 返回示例
+     ```json
+     {
+     	"data": [{
+     		"ID": 1,
+     		"CreatedAt": "***",
+     		"UpdatedAt": "***",
+     		"DeletedAt": null,
+     		"userName": "666",
+     		"password": "***",
+     		"role": 0
+     	}],
+     	"msg": "OK",
+     	"status": 200,
+     	"total": 1
+     }
+    ```   
+   &emsp; 
+   
+- **文章分类相关接口**
 
-返回示例:
-{"status":200,"msg":"OK","data":null}
+* 1: **新增文章分类** ```AddCategory```
+    
+    - Path:   ```api/v1/admin/category/add```
+    - Method: ```POST```
+    - payload示例
+    ```shell script
+     {
+         "name": "666"
+     }
+    ```
+    &emsp; 
+    
+    - curl请求示例
+    ```shell script
+      curl -X POST localhost:3000/api/v1/admin/category/add -d '{"name":"666"}' -H "Content-Type:application/json"
+    ```
+    &emsp; 
+    
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ```
+    &emsp; 
+    
+* 2: **删除文章分类** ```DeleteCate```
+    
+    - Path:   ```api/v1/admin/category/:id```
+    - Method: ```DELETE```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl -X DELETE localhost:3000/api/v1/admin/category/1
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ``` 
+    &emsp;
+    
+* 3: **编辑文章分类** ```EditCate```
+    
+    - Path:   ```api/v1/admin/category/:ID```
+    - Method: ```PUT```
+    - payload示例
+    ```shell script
+     {
+         "name": "666"
+     }
+    ```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl -X PUT localhost:3000/api/v1/admin/category/1 -d '{"name":"666"}' -H "Content-Type:application/json"
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ``` 
+    &emsp;
+    
+* 4: **返回某个分类** ```GetCateInfo```
+    
+    - Path:   ```api/v1/category/:id```
+    - Method: ```GET```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl localhost:3000/api/v1/category/1
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+    	"status": 200,
+    	"msg": "OK",
+    	"data": {
+    		"ID": 2,
+    		"CreatedAt": "***",
+    		"UpdatedAt": "***",
+    		"DeletedAt": null,
+    		"name": "666"
+    	}
+    }
+    ``` 
+    &emsp;
+    
+* 5: **返回所有分类** ```GetCateS```
+    
+    - Path:   ```api/v1/category/```
+    - Path:   ```api/v1/admin/category/```
+    - Method: ```GET```
+    - Query参数: ```pagesize,pagenum```  
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl localhost:3000/api/v1/category/
+      curl localhost:3000/api/v1/admin/category/
+    ```
+    &emsp;
+  
+    - 返回示例
+    ```json
+    {
+    	"data": [{
+    		"ID": 2,
+    		"CreatedAt": "***",
+    		"UpdatedAt": "***",
+    		"DeletedAt": null,
+    		"name": "666"
+    	}],
+    	"msg": "OK",
+    	"status": 200,
+    	"total": 1
+    }
+    ``` 
+    &emsp; 
+  
 
-{"status":1001,"msg":"用户名已存在！","data":null}
-```
+- **文章相关接口**
 
-- 2：删除单个用户  DeleteUser
-```shell script
-Path: /api/v1/admin/user/
-Method: delete 
-Header: "Content-Type:application/json"
-
-payload示例:
-  {"id":1,"password":"666"}
-
-curl请求示例: 
-curl -X DELETE localhost:3000/api/v1/admin/user/ -d '{"id":1,"password":"666"}' -H "Content-Type:application/json"
-
-返回示例:
-{"status":1006,"msg":"TOKEN不正确,请重新登陆","data":null}%
-
-{"status":200,"msg":"ok","data":null}
-```
-
-- 3：修改用户信息
-```shell script
-Path: api/v1/admin/user
-Method: PUT 
-payload示例:
-  {"id":1,"userName":"666"}
-
-curl请求示例
-curl -X PUT localhost:3000/api/v1/admin/user/ -d '{"id":1,"userName":"666","role":2}' -H "Content-Type:application/json"
-
-返回结果示例
-{"status":1001,"msg":"用户名已存在！","data":null}
-
-{"status":200,"msg":"OK","data":null}
-```
-
-- 4：查询单个用户信息 GetOneUserInfo
-```shell script
-Path: /api/v1/user/:id
-Method: get 
-
-curl请求示例
-curl localhost:3000/api/v1/user/1
-
-返回结果示例
-{"status":200,"msg":"OK","data":{"ID":1,"CreatedAt":"***","UpdatedAt":"***",
-"DeletedAt":null,"userName":"test","password":"********","role":0}}
-
-{"status":1003,"msg":"用户不存在","data":null}
-```
-
-- 5：查询所有用户 GetUsers
-```shell script
-Path: /api/v1/user/users
-Path: /api/v1/admin/user/users
-Method: get 
-
-curl请求带参数示例
-curl "localhost:3000/api/v1/user/users?pageSize=1&pageNum=1&userName=test"
-curl "localhost:3000/api/v1/admin/user/users?pageSize=1&pageNum=1&userName=test"
-
-curl请求不带参数示例
-curl "localhost:3000/api/v1/user/users"
-
-返回示例: 
-{"data":[],"msg":"OK","status":200,"total":0}
-
-{"data":[{"ID":1,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"userName":"666",
-"password":"***","role":0}],"msg":"OK","status":200,"total":1}
-```
-
-- 文章分类
-- 1：新增文章分类
-```shell script
-Path: api/v1/admin/category/add
-Method: POST 
-payload示例:
-  {"name":"666"}
-
-curl示例
-curl -X POST localhost:3000/api/v1/admin/category/add -d '{"name":"666"}' -H "Content-Type:application/json"
-
-返回示例
-{"status":200,"msg":"OK","data":null}
-
-{"status":3001,"msg":"该分类已存在","data":null}
-```
-- 2：删除文章分类
-```shell script
-Path: api/v1/admin/category/:ID
-Method: DELETE 
-
-curl示例
-curl -X DELETE localhost:3000/api/v1/admin/category/1
-
-返回示例
-{"status":200,"msg":"OK","data":null}
-
-{"status":3002,"msg":"该分类不存在","data":null}
-```
-- 3：编辑文章分类
-```shell script
-Path: api/v1/admin/category/:ID
-Method: PUT 
-
-curl示例
-curl -X PUT localhost:3000/api/v1/admin/category/1 -d '{"name":"666"}' -H "Content-Type:application/json"
-
-返回示例
-{"status":200,"msg":"OK","data":null}
-
-{"status":3002,"msg":"该分类不存在","data":null}
-```
-
-- 4：返回某个分类
-```shell script
-Path: api/v1/category/:ID
-Method: GET 
-
-curl示例
-curl localhost:3000/api/v1/category/1
-
-返回示例
-{"status":200,"msg":"OK","data":{"ID":2,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":"666"}}
-
-{"status":3002,"msg":"该分类不存在","data":null}
-```
-
-- 5：返回所有分类
-```shell script
-Path: api/v1/category/
-Path: api/v1/admin/category/
-Method: GET 
-
-curl示例
-curl localhost:3000/api/v1/category/
-curl localhost:3000/api/v1/admin/category/
-
-返回示例
-{"data":[{"ID":2,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":"666"}],"msg":"OK","status":200,"total":1}
-
-{"data":[],"msg":"OK","status":200,"total":0}
-```
-
-- 文章模块
-- 1: 新建文章
-```shell script
-Path: api/v1/admin/article/add
-Method: POST 
-payload示例:
-  '{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":666,"readCount":666}
-
-curl示例
-curl -X POST localhost:3000/api/v1/admin/article/add -d '{"title":"test","cid":1,"desc":"test","content":"test666","img":"test","commentCount":6,"readCount":6}' -H "Content-Type:application/json"
-
-返回示例
-{"status":200,"msg":"OK","data":{"Category":{"ID":0,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":""},"ID":4,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"title":"test",
-"cid":1,"desc":"test","content":"666","img":"test","commentCount":666,"readCount":666}}
-```
-
-- 2：删除文章
-```shell script
-Path: api/v1/admin/article/:ID
-Method: DELETE 
-
-curl示例
-curl -X DELETE localhost:3000/api/v1/admin/article/1
-
-返回示例
-{"status":200,"msg":"OK","data":null}
-
-{"status":2001,"msg":"文章不存在","data":null}
-```
-- 3：编辑、修改文章
-```shell script
-Path: api/v1/admin/article/:ID
-Method: PUT 
-payload示例
-'{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":999,"readCount":999}
-
-curl示例
-curl -X PUT localhost:3000/api/v1/admin/article/2 -d '{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":999,"readCount":999}' -H "Content-Type:application/json"
-
-返回示例
-{"status":200,"msg":"OK","data":null}
-
-{"status":2001,"msg":"文章不存在","data":null}
-```
+* 1: **新建文章** ```AddArticle```
+    
+    - Path:   ```api/v1/admin/article/add```
+    - Method: ```POST```
+    - payload示例
+    ```shell script
+     {
+     	"title": "test",
+     	"cid": 1,
+     	"desc": "test",
+     	"content": "666",
+     	"img": "test",
+     	"commentCount": 666,
+     	"readCount": 666
+     }
+    ```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl -X POST localhost:3000/api/v1/admin/article/add -d '{"title":"test","cid":1,"desc":"test","content":"test666","img":"test","commentCount":6,"readCount":6}' -H "Content-Type:application/json"
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+   {
+   	"status": 200,
+   	"msg": "OK",
+   	"data": {
+   		"Category": {
+   			"ID": 0,
+   			"CreatedAt": "***",
+   			"UpdatedAt": "***",
+   			"DeletedAt": null,
+   			"name": ""
+   		},
+   		"ID": 4,
+   		"CreatedAt": "***",
+   		"UpdatedAt": "***",
+   		"DeletedAt": null,
+   		"title": "test",
+   		"cid": 1,
+   		"desc": "test",
+   		"content": "666",
+   		"img": "test",
+   		"commentCount": 666,
+   		"readCount": 666
+   	}
+   }
+  ```
+  &emsp;
+    
+* 2: **删除文章** ```DeleteArticle```
+    
+    - Path:   ```api/v1/admin/article/:id```
+    - Method: ```DELETE```
+    &emsp;
+    
+    - curl请求示例
+     ```shell script
+      curl -X DELETE localhost:3000/api/v1/admin/article/1
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ```   
+    &emsp;
+    
+* 3: **编辑、修改文章** ```EditArticle```
+    
+    - Path:   ```api/v1/admin/article/:id```
+    - Method: ```PUT```
+    - payload示例
+    ```json
+      {
+      	"title": "test",
+      	"cid": 1,
+      	"desc": "test",
+      	"content": "666",
+      	"img": "test",
+      	"commentCount": 999,
+      	"readCount": 999
+      }
+    ```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl -X PUT localhost:3000/api/v1/admin/article/2 -d '{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":999,"readCount":999}' -H "Content-Type:application/json"
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+        "status": 200,
+        "msg": "OK",
+        "data": null
+    }
+    ```
+    &emsp;
+             
+* 4: **查询单个文章** ```GetOneArtInfo```
+    
+    - Path:   ```/api/v1/article/info/:id```
+    - Method: ```GET```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl localhost:3000/api/v1/article/info/2
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+    	"status": 200,
+    	"msg": "OK",
+    	"data": {
+    		"Category": {
+    			"ID": 0,
+    			"CreatedAt": "***",
+    			"UpdatedAt": "***",
+    			"DeletedAt": null,
+    			"name": ""
+    		},
+    		"ID": 6,
+    		"CreatedAt": "***",
+    		"UpdatedAt": "***",
+    		"DeletedAt": null,
+    		"title": "test",
+    		"cid": 1,
+    		"desc": "test",
+    		"content": "test666",
+    		"img": "test",
+    		"comment_count": 0,
+    		"read_count": 1
+    	}
+    }
+    ```
+    &emsp;
+     
+* 5: **查询所有文章** ```GetArts```
+    
+    - Path:     ```/api/v1/article/```
+    - Method:   ```GET```
+    - Query参数: ```pagesize,pagenum,title```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl localhost:3000/api/v1/article/
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+    	"status": 200,
+    	"msg": "OK",
+    	"data": {
+    		"Category": {
+    			"ID": 0,
+    			"CreatedAt": "***",
+    			"UpdatedAt": "***",
+    			"DeletedAt": null,
+    			"name": ""
+    		},
+    		"ID": 6,
+    		"CreatedAt": "***",
+    		"UpdatedAt": "***",
+    		"DeletedAt": null,
+    		"title": "test",
+    		"cid": 1,
+    		"desc": "test",
+    		"content": "test666",
+    		"img": "test",
+    		"comment_count": 0,
+    		"read_count": 1
+    	}
+    }
+    ```
+    &emsp;
+      
+* 6: **查询分类的所有文章** ```GetCateArt```
+    
+    - Path:     ```/api/v1/article/list/:id```
+    - Method:   ```GET```
+    - Query参数: ```pagesize,pagenum```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+      curl localhost:3000/api/v1/article/list/1
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+    	"data": [{
+    		"Category": {
+    			"id": 1,
+    			"name": "666"
+    		},
+    		"ID": 7,
+    		"CreatedAt": "2022-10-03T22:15:54.197+08:00",
+    		"UpdatedAt": "2022-10-03T22:15:54.197+08:00",
+    		"DeletedAt": null,
+    		"title": "test",
+    		"cid": 1,
+    		"desc": "test",
+    		"content": "test666",
+    		"img": "test",
+    		"comment_count": 0,
+    		"read_count": 0
+    	}],
+    	"msg": "OK",
+    	"status": 200,
+    	"total": 1
+    }
+    ```
+    &emsp;       
