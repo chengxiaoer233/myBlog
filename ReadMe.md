@@ -42,6 +42,13 @@ vue + golang + mysql 实现一个博客
 - 完善各种异常或错误逻辑，满足一个线上代码的要求
 - 用户编辑接口，增加校验逻辑，校验用户名是否存在及用户id是否匹配一致
 
+### p7
+- 完善文章分类模块的编写，并实现工程化
+
+### p8
+- 完善文章相关接口
+
+
 ## 接口测试方法
 - 用户管理
 - 1: 新增用户 AddUser
@@ -202,4 +209,49 @@ curl localhost:3000/api/v1/admin/category/
 {"data":[{"ID":2,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":"666"}],"msg":"OK","status":200,"total":1}
 
 {"data":[],"msg":"OK","status":200,"total":0}
+```
+
+- 文章模块
+- 1: 新建文章
+```shell script
+Path: api/v1/admin/article/add
+Method: POST 
+payload示例:
+  '{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":666,"readCount":666}
+
+curl示例
+curl -X POST localhost:3000/api/v1/admin/article/add -d '{"title":"test","cid":1,"desc":"test","content":"test666","img":"test","commentCount":6,"readCount":6}' -H "Content-Type:application/json"
+
+返回示例
+{"status":200,"msg":"OK","data":{"Category":{"ID":0,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"name":""},"ID":4,"CreatedAt":"***","UpdatedAt":"***","DeletedAt":null,"title":"test",
+"cid":1,"desc":"test","content":"666","img":"test","commentCount":666,"readCount":666}}
+```
+
+- 2：删除文章
+```shell script
+Path: api/v1/admin/article/:ID
+Method: DELETE 
+
+curl示例
+curl -X DELETE localhost:3000/api/v1/admin/article/1
+
+返回示例
+{"status":200,"msg":"OK","data":null}
+
+{"status":2001,"msg":"文章不存在","data":null}
+```
+- 3：编辑、修改文章
+```shell script
+Path: api/v1/admin/article/:ID
+Method: PUT 
+payload示例
+'{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":999,"readCount":999}
+
+curl示例
+curl -X PUT localhost:3000/api/v1/admin/article/2 -d '{"title":"test","cid":1,"desc":"test","content":"666","img":"test","commentCount":999,"readCount":999}' -H "Content-Type:application/json"
+
+返回示例
+{"status":200,"msg":"OK","data":null}
+
+{"status":2001,"msg":"文章不存在","data":null}
 ```
