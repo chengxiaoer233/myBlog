@@ -1,4 +1,4 @@
-package middleware
+package logger
 
 import (
 	"fmt"
@@ -6,31 +6,43 @@ import (
 	retalog "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
+	"myBlog/model"
 	"os"
 	"time"
 )
 
+var logger *logrus.Logger
+
+func Log() *logrus.Logger{
+	return logger
+}
+
 func Logger() gin.HandlerFunc {
-	filePath := "log/log"
+
 	//linkName := "latest_log.log"
+	filePath := model.LogConf.LogPath      // 日志保存位置
+	maxAge := model.LogConf.MaxAge         // 日志保存最大时间
+	rotateTime := model.LogConf.RotateTime // 日志切割时间
+	level := model.LogConf.Level           // 日志级别
 
-	scr, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0755)
+	scr, err := os.OpenFile(filePath+"/log", os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
-		fmt.Println("err:", err)
+		panic(fmt.Sprintf("logFile open err=%s", err.Error()))
 	}
-	logger := logrus.New()
 
+	logger = logrus.New()
 	logger.Out = scr
+	logger.SetLevel(logrus.Level(level))
 
-	logger.SetLevel(logrus.DebugLevel)
-
+	// 日志属性设置
 	logWriter, _ := retalog.New(
 		filePath+"%Y%m%d.log",
-		retalog.WithMaxAge(7*24*time.Hour),
-		retalog.WithRotationTime(24*time.Hour),
+		retalog.WithMaxAge(time.Duration(maxAge)*time.Hour),
+		retalog.WithRotationTime(time.Duration(rotateTime)*time.Hour),
 		//retalog.WithLinkName(linkName),
 	)
 
+	// 写入的日志级别
 	writeMap := lfshook.WriterMap{
 		logrus.InfoLevel:  logWriter,
 		logrus.FatalLevel: logWriter,
@@ -42,9 +54,9 @@ func Logger() gin.HandlerFunc {
 	Hook := lfshook.NewHook(writeMap, &logrus.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
-
 	logger.AddHook(Hook)
 
+	// 需要写入的日志字段
 	return func(c *gin.Context) {
 		startTime := time.Now()
 		c.Next()
@@ -74,6 +86,8 @@ func Logger() gin.HandlerFunc {
 			"DataSize":  dataSize,
 			"Agent":     userAgent,
 		})
+
+		// 根据对应的code码来生成对应的日志
 		if len(c.Errors) > 0 {
 			entry.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
 		}

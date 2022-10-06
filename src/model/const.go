@@ -24,9 +24,13 @@ const (
 	// code= 3000... 分类模块的错误
 	ErrCateNameUsed  = 3001
 	ErrCateNotExists = 3002
+
+	// 查询主页不在
+	ErrProfileNotExists = 4001
 )
 
 var Err2Msg = map[int]string{
+
 	Success:              "OK",
 	Error:                "FAIL",
 	ErrUserNameUsed:      "用户名已存在！",
@@ -40,10 +44,12 @@ var Err2Msg = map[int]string{
 	ErrUserNoRight:       "该用户无权限",
 
 	ErrArtNotExists: "文章不存在",
-	ErrArtExists:   "文章已经存在",
+	ErrArtExists:    "文章已经存在",
 
 	ErrCateNameUsed:  "该分类已存在",
 	ErrCateNotExists: "该分类不存在",
+
+	ErrProfileNotExists : "主页不存在",
 }
 
 // 返回错误信息
