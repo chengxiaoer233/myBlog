@@ -10,6 +10,11 @@
         <span>仪表盘</span>
       </a-menu-item>
 
+      <a-menu-item key="data">
+        <a-icon type="snippets"></a-icon>
+        <span>数据管理</span>
+      </a-menu-item>
+
       <a-sub-menu>
         <span slot="title">
           <a-icon type="file" />

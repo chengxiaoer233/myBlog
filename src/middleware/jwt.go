@@ -7,6 +7,7 @@ import (
 	"myBlog/model"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type JWT struct {
@@ -40,6 +41,7 @@ func (j *JWT) CreateToken(claims MyClaims) (string, error) {
 
 // ParserToken 解析token
 func (j *JWT) ParserToken(tokenString string) (*MyClaims, error) {
+
 	token, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return j.JwtKey, nil
 	})
@@ -70,10 +72,12 @@ func (j *JWT) ParserToken(tokenString string) (*MyClaims, error) {
 
 // JwtToken jwt中间件
 func JwtToken() gin.HandlerFunc {
+
 	return func(c *gin.Context) {
+
 		var code int
 		tokenHeader := c.Request.Header.Get("Authorization")
-		if tokenHeader == "" {
+		if tokenHeader == "" { // 没有token这个字段，直接返回结束
 			code = model.ErrTokenExists
 			c.JSON(http.StatusOK, gin.H{
 				"status":  code,
@@ -83,6 +87,7 @@ func JwtToken() gin.HandlerFunc {
 			return
 		}
 
+		// 将header 按空格进行划分
 		checkToken := strings.Split(tokenHeader, " ")
 		if len(checkToken) == 0 {
 			c.JSON(http.StatusOK, gin.H{
@@ -93,6 +98,7 @@ func JwtToken() gin.HandlerFunc {
 			return
 		}
 
+		// 前端固定传过来的两个一个字段，格式为Bearer token
 		if len(checkToken) != 2 || checkToken[0] != "Bearer" {
 			c.JSON(http.StatusOK, gin.H{
 				"status":  code,
@@ -102,10 +108,12 @@ func JwtToken() gin.HandlerFunc {
 			return
 		}
 
-		j := NewJWT()
 		// 解析token
+		j := NewJWT()
 		claims, err := j.ParserToken(checkToken[1])
 		if err != nil {
+
+			// token过期
 			if err == TokenExpired {
 				c.JSON(http.StatusOK, gin.H{
 					"status":  model.Error,
@@ -115,6 +123,7 @@ func JwtToken() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
+
 			// 其他错误
 			c.JSON(http.StatusOK, gin.H{
 				"status":  model.Error,
@@ -128,4 +137,22 @@ func JwtToken() gin.HandlerFunc {
 		c.Set("username", claims)
 		c.Next()
 	}
+}
+
+// token生成函数
+func (j *JWT) SetToken(c *gin.Context, user *model.User) (token string, err error) {
+
+	// 定义jwt参数
+	claims := MyClaims{
+		Username: user.UserName,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix() - 100,
+			ExpiresAt: time.Now().Unix() + 604800,
+			Issuer:    "myBlog",
+		},
+	}
+
+	// 生成jwt token
+	token, err = j.CreateToken(claims)
+	return
 }

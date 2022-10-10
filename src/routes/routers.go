@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	v1 "myBlog/api/v1"
 	"myBlog/middleware"
+	"myBlog/middleware/logger"
 	"myBlog/model"
 )
 
@@ -27,7 +28,7 @@ func InitRouters() {
 	_ = r.SetTrustedProxies(nil)
 
 	r.HTMLRender = createMyRender()
-	r.Use(middleware.Logger())
+	r.Use(logger.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.Cors())
 
@@ -43,8 +44,7 @@ func InitRouters() {
 		c.HTML(200, "admin", nil)
 	})
 
-	// 采用路由组的形式来阻止路由关系
-	// 前端展示页面
+	// 前端展示页面,采用路由组的形式来阻止路由关系
 	routerV1 := r.Group("api/v1")
 	{
 		// 用户模块
@@ -61,7 +61,7 @@ func InitRouters() {
 		{
 			// 查询单个分类、查询所有分类
 			routerV1Cate.GET("/:id", v1.GetCateInfo)
-			routerV1Cate.GET("/", v1.GetCateS)
+			routerV1Cate.GET("", v1.GetCateS)
 		}
 
 		//  文章模块
@@ -69,23 +69,49 @@ func InitRouters() {
 		{
 			// 查询单个、查询所有、查询某个分类下的所有文章
 			routerV1Article.GET("/info/:id", v1.GetOneArtInfo)
-			routerV1Article.GET("/", v1.GetArts)
+			routerV1Article.GET("", v1.GetArts)
 			routerV1Article.GET("/list/:id", v1.GetCateArt)
 
 		}
+
+		//  评论模块
+		{
+			routerV1.POST("addcomment", v1.AddComment)
+			routerV1.GET("comment/info/:id", v1.GetComment)
+			routerV1.GET("commentfront/:id", v1.GetCommentListFront)
+			routerV1.GET("commentcount/:id", v1.GetCommentCount)
+		}
+
+		// 登录控制模块
+		routerV1.POST("login", v1.Login)
+		routerV1.POST("loginfront", v1.LoginFront)
+
+		// 文件上传
+		routerV1.POST("upload", v1.Upload)
+
+		// 个人页展示
+		routerV1.GET("profile/:id", v1.GetProfile)
+
+		// 展示网站总访问量
+		routerV1.GET("data/total", v1.GetTotalCount)
 	}
 
 	// admin后台相关接口
+	// admin接口都需要鉴权
 	routerAdmin := r.Group("api/v1/admin")
+	routerAdmin.Use(middleware.JwtToken())
 	{
 		// 用户模块
 		routerAdminUser := routerAdmin.Group("user")
 		{
 			// 删除某个用户、修改某个用户信息、查询所有用户信息
-			routerAdminUser.DELETE("/", v1.DeleteUser)
-			routerAdminUser.PUT("/", v1.EditUser)
+			routerAdminUser.DELETE("/:id", v1.DeleteUser)
+			routerAdminUser.PUT("/:id", v1.EditUser)
 			routerAdminUser.GET("/users", v1.GetUsers)
 		}
+
+		//修改密码
+		routerAdmin.PUT("/changepw/:id", v1.ChangeUserPassword)
 
 		// 分类模块
 		routerAdminCate := routerAdmin.Group("category")
@@ -94,7 +120,7 @@ func InitRouters() {
 			routerAdminCate.POST("/add", v1.AddCategory)
 			routerAdminCate.DELETE("/:id", v1.DeleteCate)
 			routerAdminCate.PUT("/:id", v1.EditCate)
-			routerAdminCate.GET("/", v1.GetCateS)
+			routerAdminCate.GET("", v1.GetCateS)
 		}
 
 		// 文章模块
@@ -104,7 +130,30 @@ func InitRouters() {
 			routerAdminArticle.POST("/add", v1.AddArticle)
 			routerAdminArticle.DELETE("/:id", v1.DeleteArticle)
 			routerAdminArticle.PUT("/:id", v1.EditArticle)
+			routerAdminArticle.GET("", v1.GetArts)
+			routerAdminArticle.GET("/info/:id", v1.GetOneArtInfo)
 		}
+
+		// 评论模块
+		{
+			routerAdmin.GET("comment/list", v1.GetCommentList)
+			routerAdmin.DELETE("delcomment/:id", v1.DeleteComment)
+			routerAdmin.PUT("checkcomment/:id", v1.CheckComment)
+			routerAdmin.PUT("uncheckcomment/:id", v1.UnCheckComment)
+		}
+
+		// 个人页
+		routerAdminProfile := routerAdmin.Group("profile")
+		{
+			// 获取个人页，更新个人页
+			routerAdminProfile.GET("/:id", v1.GetProfile)
+			routerAdminProfile.PUT("/:id", v1.UpdateProfile)
+		}
+
+		// 数据统计模块
+		routerAdminData := routerAdmin.Group("data")
+		routerAdminData.GET("infos", v1.GetVisitsInfos)
+		routerAdminData.GET("total", v1.GetTotalCount)
 	}
 
 	// run

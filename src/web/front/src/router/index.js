@@ -20,7 +20,7 @@ VueRouter.prototype.push = function push(location) {
 }
 
 const routes = [
-  { path: '/', component: ArticleList, meta: { title: '欢迎来到GinBlog' } },
+  { path: '/', component: ArticleList, meta: { title: '欢迎来到myBlog' } },
   {
     path: '/article/detail/:id',
     component: Detail,
@@ -42,8 +42,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
+  // mode: 'history',
+  // base: process.env.BASE_URL,
   routes
 })
 

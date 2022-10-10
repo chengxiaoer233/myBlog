@@ -123,11 +123,25 @@ func (u *SqlUser) DeleteUser(id int) (int, error) {
 	return model.Success, errors.New("ok")
 }
 
+// EditUser编辑用户
 func (u *SqlUser) EditUser(data *model.User) (code int, err error) {
 
 	var maps = make(map[string]interface{})
 	maps["username"] = data.UserName
 	maps["role"] = data.Role
+	err = Db.Model(&data).Where("id = ? ", data.ID).Updates(maps).Error
+	if err != nil {
+		return model.ErrInner, err
+	}
+
+	return model.Success, nil
+}
+
+// EditUser编辑用户
+func (u *SqlUser) EditPassWord(data *model.User) (code int, err error) {
+
+	var maps = make(map[string]interface{})
+	maps["password"] = data.Password
 	err = Db.Model(&data).Where("id = ? ", data.ID).Updates(maps).Error
 	if err != nil {
 		return model.ErrInner, err

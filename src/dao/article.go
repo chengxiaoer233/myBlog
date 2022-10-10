@@ -7,8 +7,8 @@ import (
 )
 
 var ArticleInterface SqlArticle
-type SqlArticle struct{
 
+type SqlArticle struct {
 }
 
 // CheckUser 查询文章是否存在
@@ -34,14 +34,14 @@ func (a *SqlArticle) CreateArt(data *model.Article) (err error) {
 }
 
 // DeleteArt 删除文章
-func (a *SqlArticle) DeleteArt(id int)(err error){
+func (a *SqlArticle) DeleteArt(id int) (err error) {
 	var data model.Article
-	err = Db.Where("id = ?",id).Unscoped().Delete(&data).Error
+	err = Db.Where("id = ?", id).Unscoped().Delete(&data).Error
 	return
 }
 
 // EditArticle 编辑文章
-func (a *SqlArticle)EditArticle(id int,data *model.Article)(err error){
+func (a *SqlArticle) EditArticle(id int, data *model.Article) (err error) {
 
 	var maps = make(map[string]interface{})
 	maps["title"] = data.Title
@@ -50,26 +50,32 @@ func (a *SqlArticle)EditArticle(id int,data *model.Article)(err error){
 	maps["content"] = data.Content
 	maps["img"] = data.Img
 
-	err = Db.Model(data).Where("id = ?",id).Updates(&maps).Error
+	err = Db.Model(data).Where("id = ?", id).Updates(&maps).Error
 	return
 }
 
 // 查询返回单个文章
 // GetArtInfo 查询单个文章
-func (a *SqlArticle)GetArtInfo(id int) (art model.Article, err error) {
+func (a *SqlArticle) GetArtInfo(id int) (art model.Article, err error) {
 
 	err = Db.Where("id = ?", id).Preload("Category").First(&art).Error
 
+	// 每执行一次该方法，read_count就加一
 	err = Db.Model(&art).Where("id = ?", id).UpdateColumn("read_count", gorm.Expr("read_count + ?", 1)).Error
+
+	// 阅读量访问统计加一
+	err = Db.Model(&model.Readdetail{}).Where("article_id = ?", id).Updates(map[string]interface{}{"count": gorm.Expr("count + ?", 1)}).Error
 
 	return
 }
 
 // 查询所有文章
 // GetArt 查询文章列表
-func (a *SqlArticle)GetAllArts(pageSize int, pageNum int) (articleList *[]model.Article, total int64, err error) {
+func (a *SqlArticle) GetAllArts(pageSize int, pageNum int) (articleList *[]model.Article, total int64, err error) {
 
-	err = Db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("Category").Find(&articleList).Error
+	//err = Db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("Category").Find(&articleList).Error
+
+	err = Db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("left join category on category.id = article.cid").Find(&articleList).Error
 
 	// 单独计数
 	err = Db.Model(&articleList).Count(&total).Error
@@ -78,14 +84,14 @@ func (a *SqlArticle)GetAllArts(pageSize int, pageNum int) (articleList *[]model.
 }
 
 // SearchArticle 搜索文章标题
-func (a *SqlArticle)SearchArticle(title string, pageSize int, pageNum int) (articleList *[]model.Article, total int64, err error) {
+func (a *SqlArticle) SearchArticle(title string, pageSize int, pageNum int) (articleList *[]model.Article, total int64, err error) {
 
 	err = Db.Select("article.id,title, img, created_at, updated_at, `desc`, comment_count, read_count, Category.name").
 		Order("Created_At DESC").Joins("Category").
-		Where("title LIKE ?", title+"%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
+		Where("title LIKE ?", "%"+title+"%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
 
 	//单独计数
-	err = Db.Model(&articleList).Where("title LIKE ?",title+"%").Count(&total).Error
+	err = Db.Model(&articleList).Where("title LIKE ?", title+"%").Count(&total).Error
 
 	return
 }

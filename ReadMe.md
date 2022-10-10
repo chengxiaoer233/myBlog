@@ -114,20 +114,20 @@ vue + golang + mysql 实现一个博客
     
 * 3: **修改用户信息** ```EditUser```
 
-    - Path:   ```api/v1/admin/user```
+    - Path:   ```api/v1/admin/user/:id```
     - Method: ```PUT```
     - payload示例
     ```shell script
      {
-     	"id": 1,
-     	"password": "666"
+     	"username": "6666",
+     	"role": 2
      }
     ```
     &emsp; 
   
     - curl请求示例
     ```shell script
-      curl -X PUT localhost:3000/api/v1/admin/user/ -d '{"id":1,"userName":"666","role":2}' -H "Content-Type:application/json"
+      curl -X PUT localhost:3000/api/v1/admin/user/7 -d '{"username":"666","role":2}' -H "Content-Type:application/json"
     ```
     &emsp;
      
@@ -144,7 +144,7 @@ vue + golang + mysql 实现一个博客
  * 4: **查询单个用户信息** ```GetOneUserInfo```
      
      - Path:   ```/api/v1/user/:id```
-     - Method: ```GET```
+     - Method: ```GET```   
      &emsp; 
      
      - curl请求示例
@@ -176,7 +176,7 @@ vue + golang + mysql 实现一个博客
      - Path:   ```/api/v1/user/users```
      - Path:   ```/api/v1/admin/user/users```
      - Method: ```GET```
-     - Query参数：```pagesize,pagenum```
+     - Query参数：```pagesize,pagenum```   
      &emsp; 
      
      - curl请求示例
@@ -239,7 +239,7 @@ vue + golang + mysql 实现一个博客
 * 2: **删除文章分类** ```DeleteCate```
     
     - Path:   ```api/v1/admin/category/:id```
-    - Method: ```DELETE```
+    - Method: ```DELETE```   
     &emsp;
     
     - curl请求示例
@@ -289,7 +289,7 @@ vue + golang + mysql 实现一个博客
 * 4: **返回某个分类** ```GetCateInfo```
     
     - Path:   ```api/v1/category/:id```
-    - Method: ```GET```
+    - Method: ```GET```  
     &emsp;
     
     - curl请求示例
@@ -405,7 +405,7 @@ vue + golang + mysql 实现一个博客
 * 2: **删除文章** ```DeleteArticle```
     
     - Path:   ```api/v1/admin/article/:id```
-    - Method: ```DELETE```
+    - Method: ```DELETE```   
     &emsp;
     
     - curl请求示例
@@ -461,7 +461,7 @@ vue + golang + mysql 实现一个博客
 * 4: **查询单个文章** ```GetOneArtInfo```
     
     - Path:   ```/api/v1/article/info/:id```
-    - Method: ```GET```
+    - Method: ```GET```  
     &emsp;
     
     - curl请求示例
@@ -503,7 +503,7 @@ vue + golang + mysql 实现一个博客
     
     - Path:     ```/api/v1/article/```
     - Method:   ```GET```
-    - Query参数: ```pagesize,pagenum,title```
+    - Query参数: ```pagesize,pagenum,title```  
     &emsp;
     
     - curl请求示例
@@ -545,7 +545,7 @@ vue + golang + mysql 实现一个博客
     
     - Path:     ```/api/v1/article/list/:id```
     - Method:   ```GET```
-    - Query参数: ```pagesize,pagenum```
+    - Query参数: ```pagesize,pagenum```   
     &emsp;
     
     - curl请求示例
@@ -579,4 +579,96 @@ vue + golang + mysql 实现一个博客
     	"total": 1
     }
     ```
-    &emsp;       
+    &emsp;   
+        
+- **登录相关接口**
+
+ * 1: **admin 登录** ```Login```
+     
+     - Path:   ```api/v1/login```
+     - Method: ```POST```
+     - payload示例
+     ```shell script
+      {
+              "userName": "666",
+              "password": "666",
+              "role": 0
+     }
+     ```
+     &emsp;
+     
+     - curl请求示例
+     ```shell script
+      curl -X POST localhost:3000/api/v1/login -d '{"userName":"test6666","password":"test6666","role":0}' -H "Content-Type:application/json"
+     ```
+     &emsp;
+     
+     - 返回示例
+     ```json
+     {
+     	"data": "test6666",
+     	"id": 0,
+     	"message": "OK",
+     	"status": 200,
+     	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3Q2NjY2IiwiZXhwIjoxNjY1NDcyOTEyLCJpc3MiOiJteUJsb2ciLCJuYmYiOjE2NjQ4NjgwMTJ9.aEah8uKsUjxKlOjepnDmiDHsJluSjjFCP9wKYnj-P9g"
+     }
+     ```
+   &emsp; 
+   
+* 2: **front登录** ```LoginFront```
+    
+    - Path:   ```api/v1/loginfront```
+    - Method: ```POST```
+    - payload示例
+    ```shell script
+     {
+             "userName": "666",
+             "password": "666",
+             "role": 0
+    }
+    ```
+    &emsp;
+    
+    - curl请求示例
+    ```shell script
+     curl -X POST localhost:3000/api/v1/loginfront -d '{"userName":"test6666","password":"test6666","role":0}' -H "Content-Type:application/json"
+    ```
+    &emsp;
+    
+    - 返回示例
+    ```json
+    {
+    	"data": "test6666",
+    	"id": 0,
+    	"message": "OK",
+    	"status": 200,
+    	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3Q2NjY2IiwiZXhwIjoxNjY1NDcyOTEyLCJpc3MiOiJteUJsb2ciLCJuYmYiOjE2NjQ4NjgwMTJ9.aEah8uKsUjxKlOjepnDmiDHsJluSjjFCP9wKYnj-P9g"
+    }
+    ```
+  &emsp;
+
+- **文件上传相关接口**
+  
+ * 1: **文件上传** ```Upload```
+     
+     - Path:   ```api/v1/upload```
+     - Method: ```multipart/form-data ```
+     &emsp;
+     
+     - curl请求示例
+     ```shell script
+      curl -X POST localhost:3000/api/v1/upload -d '{"userName":"test6666","password":"test6666","role":0}' -H "Content-Type:application/json"
+     ```
+     &emsp;
+     
+     - 返回示例
+     ```json
+     {
+     	"data": "test6666",
+     	"id": 0,
+     	"message": "OK",
+     	"status": 200,
+     	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3Q2NjY2IiwiZXhwIjoxNjY1NDcyOTEyLCJpc3MiOiJteUJsb2ciLCJuYmYiOjE2NjQ4NjgwMTJ9.aEah8uKsUjxKlOjepnDmiDHsJluSjjFCP9wKYnj-P9g"
+     }
+     ```
+   &emsp; 

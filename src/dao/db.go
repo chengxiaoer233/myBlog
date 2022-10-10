@@ -41,7 +41,7 @@ func initDb() {
 
 	// 迁移数据表，在没有数据表结构变更时候，建议注释不执行
 	// 刷新数据库中的表格，使其保持最新，即让数据库之前存储的记录的表格字段和程序中最新使用的表格字段保持一致（只增不减）
-	_ = Db.AutoMigrate(&model.User{}, &model.Article{}, &model.Category{}, model.Profile{}, model.Comment{})
+	_ = Db.AutoMigrate(&model.User{}, &model.Article{}, &model.Category{}, model.Profile{}, model.Comment{}, model.Readdetail{})
 
 	// *gorm.DB 返回一个通用的数据库接口 *sql.DB
 	// 获取通用数据库对象 sql.DB ，然后使用其提供的功能
