@@ -163,28 +163,28 @@ func EditUser(c *gin.Context) {
 		return
 	}
 
-/*	// 已经找到对应的用户信息
-	if len(users) > 1 { // 找到多个用户，直接返回
-		c.JSON(http.StatusOK, resp2Client(model.ErrUserNameUsed, model.GetErrMsg(model.ErrUserNameUsed), nil))
-		return
-	} else if len(users) == 1 { // 找到一个用户信息
-		id := users[0].ID
-
-		if id == user.ID { // 是当前用户，直接更新
-			code, err := dao.UserInterface.EditUser(&user)
-			if err != nil {
-				c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
-				return
-			}
-
-			c.JSON(http.StatusOK, resp2Client(code, model.GetErrMsg(code), nil))
-			return
-
-		} else { // 其他用户，报错
+	/*	// 已经找到对应的用户信息
+		if len(users) > 1 { // 找到多个用户，直接返回
 			c.JSON(http.StatusOK, resp2Client(model.ErrUserNameUsed, model.GetErrMsg(model.ErrUserNameUsed), nil))
 			return
-		}
-	}*/
+		} else if len(users) == 1 { // 找到一个用户信息
+			id := users[0].ID
+
+			if id == user.ID { // 是当前用户，直接更新
+				code, err := dao.UserInterface.EditUser(&user)
+				if err != nil {
+					c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
+					return
+				}
+
+				c.JSON(http.StatusOK, resp2Client(code, model.GetErrMsg(code), nil))
+				return
+
+			} else { // 其他用户，报错
+				c.JSON(http.StatusOK, resp2Client(model.ErrUserNameUsed, model.GetErrMsg(model.ErrUserNameUsed), nil))
+				return
+			}
+		}*/
 
 	// 严格来讲这里需要校验用户密码之类的，暂时放过，直接更新用户信息
 	user.ID = uint(id)

@@ -16,8 +16,8 @@ mkdir -p "${BUILD_DIR}"/etc
 cp -r ./etc/* "${BUILD_DIR}"/etc
 
 #将web目录下的内容也需要拷贝打包
-mkdir -p "${BUILD_DIR}"/web
-cp -r ./src/web/* "${BUILD_DIR}"/web
+#mkdir -p "${BUILD_DIR}"/web
+#cp -r ./src/web/* "${BUILD_DIR}"/web
 
 #拷贝启动脚本
 cp ./script/start.sh "${BUILD_DIR}"

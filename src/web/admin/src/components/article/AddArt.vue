@@ -139,12 +139,12 @@ export default {
       this.$refs.artInfoRef.validate(async (valid) => {
         if (!valid) return this.$message.error('参数验证未通过，请按要求录入文章内容')
         if (id === 0) {
-          const { data: res } = await this.$http.post('article/add', this.artInfo)
+          const { data: res } = await this.$http.post('admin/article/add', this.artInfo)
           if (res.status !== 200) return this.$message.error(res.message)
           this.$router.push('/artlist')
           this.$message.success('添加文章成功')
         } else {
-          const { data: res } = await this.$http.put(`article/${id}`, this.artInfo)
+          const { data: res } = await this.$http.put(`admin/article/${id}`, this.artInfo)
           if (res.status !== 200) return this.$message.error(res.message)
 
           this.$router.push('/artlist')

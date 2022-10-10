@@ -16,7 +16,7 @@ func Validate(data interface{}) (string, error) {
 
 	err := zhTrans.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 		label := field.Tag.Get("label")

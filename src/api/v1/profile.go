@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func GetProfile(c*gin.Context){
+func GetProfile(c *gin.Context) {
 
 	var id int
 	var err error
@@ -32,12 +32,12 @@ func GetProfile(c*gin.Context){
 	return
 }
 
-func UpdateProfile(c*gin.Context){
+func UpdateProfile(c *gin.Context) {
 
 	var profile model.Profile
 	err := c.ShouldBindJSON(&profile)
 	if err != nil {
-		c.JSON(http.StatusOK,resp2Client(model.ErrInner,err.Error(),nil))
+		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
 	}
 

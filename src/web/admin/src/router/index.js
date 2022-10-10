@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 const Login = () => import(/* webpackChunkName: "Login" */ '../views/Login.vue')
 const Admin = () => import(/* webpackChunkName: "Admin" */ '../views/Admin.vue')
 
+const Data = () => import(/* webpackChunkName: "Data" */ '../components/data/data.vue')
+
 // 页面路由组件
 const Index = () => import(/* webpackChunkName: "Index" */ '../components/admin/Index.vue')
 const AddArt = () => import(/* webpackChunkName: "AddArt" */ '../components/article/AddArt.vue')
@@ -34,7 +36,7 @@ const routes = [
     path: '/',
     name: 'admin',
     meta: {
-      title: 'GinBlog 后台管理页面'
+      title: 'myBlog 后台管理页面'
     },
     component: Admin,
     children: [
@@ -42,7 +44,7 @@ const routes = [
         path: 'index',
         component: Index,
         meta: {
-          title: 'GinBlog 后台管理页面'
+          title: 'myBlog 后台管理页面'
         }
       },
       {
@@ -93,7 +95,15 @@ const routes = [
         component: CommentList,
         meta: {
           title: '评论管理'
-        }
+        },
+        
+      },
+      {
+        path: 'data',
+        component: Data,
+        meta: {
+          title: '数据管理'
+        },
       }
     ]
   }

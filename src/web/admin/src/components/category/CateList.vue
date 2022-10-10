@@ -185,7 +185,7 @@ export default {
         title: '提示：请再次确认',
         content: '确定要删除该分类吗？一旦删除，无法恢复',
         onOk: async () => {
-          const { data: res } = await this.$http.delete(`category/${id}`)
+          const { data: res } = await this.$http.delete(`admin/category/${id}`)
           if (res.status != 200) return this.$message.error(res.message)
           this.$message.success('删除成功')
           this.getCateList()
@@ -199,7 +199,7 @@ export default {
     addCateOk() {
       this.$refs.addCateRef.validate(async (valid) => {
         if (!valid) return this.$message.error('参数不符合要求，请重新输入')
-        const { data: res } = await this.$http.post('category/add', {
+        const { data: res } = await this.$http.post('admin/category/add', {
           name: this.newCate.name,
         })
         if (res.status != 200) return this.$message.error(res.message)
@@ -224,7 +224,7 @@ export default {
     editCateOk() {
       this.$refs.addCateRef.validate(async (valid) => {
         if (!valid) return this.$message.error('参数不符合要求，请重新输入')
-        const { data: res } = await this.$http.put(`category/${this.CateInfo.id}`, {
+        const { data: res } = await this.$http.put(`admin/category/${this.CateInfo.id}`, {
           name: this.CateInfo.name,
         })
         if (res.status != 200) return this.$message.error(res.message)

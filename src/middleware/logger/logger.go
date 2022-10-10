@@ -13,7 +13,7 @@ import (
 
 var logger *logrus.Logger
 
-func Log() *logrus.Logger{
+func Log() *logrus.Logger {
 	return logger
 }
 

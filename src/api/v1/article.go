@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"myBlog/dao"
@@ -26,7 +25,16 @@ func AddArticle(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v=", data)
+	// 阅读记录表也需要插入数据
+	var read model.Readdetail
+	read.ArticleId = int(data.ID)
+	read.Count = 1
+	err = dao.DataInterface.CreateRecord(&read)
+	if err != nil {
+		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
+		return
+	}
+
 	c.JSON(http.StatusOK, resp2Client(model.Success, model.GetErrMsg(model.Success), data))
 	return
 }

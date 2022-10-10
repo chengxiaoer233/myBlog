@@ -9,7 +9,7 @@ import (
 )
 
 // AddComment 添加评论
-func AddComment(c *gin.Context){
+func AddComment(c *gin.Context) {
 
 	var data model.Comment
 	err := c.ShouldBindJSON(&data)
@@ -36,7 +36,7 @@ func GetComment(c *gin.Context) {
 		return
 	}
 
-	data,err := dao.CommentInterface.GetOneComment(id)
+	data, err := dao.CommentInterface.GetOneComment(id)
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
@@ -51,7 +51,7 @@ func GetComment(c *gin.Context) {
 }
 
 // GetCommentListFront 前端展示页面显示评论列表
-func GetCommentListFront (c *gin.Context){
+func GetCommentListFront(c *gin.Context) {
 
 	pageSize, err := strconv.Atoi(c.DefaultQuery("pagesize", "10"))
 	if err != nil {
@@ -82,7 +82,7 @@ func GetCommentListFront (c *gin.Context){
 		pageNum = 1
 	}
 
-	data,total,err := dao.CommentInterface.GetCommentListFront(id,pageSize,pageNum)
+	data, total, err := dao.CommentInterface.GetCommentListFront(id, pageSize, pageNum)
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
@@ -98,7 +98,7 @@ func GetCommentListFront (c *gin.Context){
 }
 
 // GetCommentCount 获取谋篇文章的数量
-func GetCommentCount(c *gin.Context){
+func GetCommentCount(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -106,7 +106,7 @@ func GetCommentCount(c *gin.Context){
 		return
 	}
 
-	total,err := dao.CommentInterface.GetCommentCount(id)
+	total, err := dao.CommentInterface.GetCommentCount(id)
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
@@ -114,14 +114,14 @@ func GetCommentCount(c *gin.Context){
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  model.Success,
-		"total":    total,
+		"total":   total,
 		"message": model.GetErrMsg(model.Success),
 	})
 	return
 }
 
 // GetCommentList 后台接口查询所有评论列表
-func GetCommentList(c *gin.Context){
+func GetCommentList(c *gin.Context) {
 
 	pageSize, err := strconv.Atoi(c.DefaultQuery("pagesize", "10"))
 	if err != nil {
@@ -146,7 +146,7 @@ func GetCommentList(c *gin.Context){
 		pageNum = 1
 	}
 
-	data,total,err := dao.CommentInterface.GetCommentLists(pageSize,pageNum)
+	data, total, err := dao.CommentInterface.GetCommentLists(pageSize, pageNum)
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
@@ -162,7 +162,7 @@ func GetCommentList(c *gin.Context){
 }
 
 // DeleteComment 删除评论
-func DeleteComment(c *gin.Context){
+func DeleteComment(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -184,7 +184,7 @@ func DeleteComment(c *gin.Context){
 }
 
 // CheckComment 通过评论
-func CheckComment (c *gin.Context){
+func CheckComment(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -199,7 +199,7 @@ func CheckComment (c *gin.Context){
 		return
 	}
 
-	err = dao.CommentInterface.CheckComment(id,&data)
+	err = dao.CommentInterface.CheckComment(id, &data)
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return
@@ -213,7 +213,7 @@ func CheckComment (c *gin.Context){
 }
 
 // CheckComment 通过评论
-func UnCheckComment (c *gin.Context){
+func UnCheckComment(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -228,7 +228,7 @@ func UnCheckComment (c *gin.Context){
 		return
 	}
 
-	err = dao.CommentInterface.UncheckComment(id,&data)
+	err = dao.CommentInterface.UncheckComment(id, &data)
 	if err != nil {
 		c.JSON(http.StatusOK, resp2Client(model.ErrInner, err.Error(), nil))
 		return

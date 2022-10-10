@@ -120,7 +120,7 @@ export default {
   methods: {
     // 获取评论列表
     async getCommentList() {
-      const { data: res } = await this.$http.get('comment/list', {
+      const { data: res } = await this.$http.get('admin/comment/list', {
         params: {
           pagesize: this.queryParam.pagesize,
           pagenum: this.queryParam.pagenum,
@@ -162,7 +162,7 @@ export default {
         onOk: async () => {
           const { data: res_status } = await this.$http.get(`comment/info/${id}`)
           if (res_status.data.status === 1) return this.$message.error('该评论已处于显示状态，无需审核')
-          const { data: res } = await this.$http.put(`checkcomment/${id}`, {
+          const { data: res } = await this.$http.put(`admin/checkcomment/${id}`, {
             status: 1,
           })
           if (res.status != 200) return this.$message.error(res.message)
@@ -183,7 +183,7 @@ export default {
         onOk: async () => {
           const { data: res_status } = await this.$http.get(`comment/info/${id}`)
           if (res_status.data.status === 2) return this.$message.error('该评论已处于未审核状态，无需撤下')
-          const { data: res } = await this.$http.put(`uncheckcomment/${id}`, {
+          const { data: res } = await this.$http.put(`admin/uncheckcomment/${id}`, {
             status: 2,
           })
           if (res.status != 200) return this.$message.error(res.message)
@@ -202,7 +202,7 @@ export default {
         title: '提示：请再次确认',
         content: '要删除吗？',
         onOk: async () => {
-          const { data: res } = await this.$http.delete(`delcomment/${id}`)
+          const { data: res } = await this.$http.delete(`admin/delcomment/${id}`)
           if (res.status != 200) return this.$message.error(res.message)
           this.$message.success('删除成功')
           this.getCommentList()

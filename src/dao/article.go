@@ -60,8 +60,11 @@ func (a *SqlArticle) GetArtInfo(id int) (art model.Article, err error) {
 
 	err = Db.Where("id = ?", id).Preload("Category").First(&art).Error
 
-	// 没执行一次该方法，read_count就加一
+	// 每执行一次该方法，read_count就加一
 	err = Db.Model(&art).Where("id = ?", id).UpdateColumn("read_count", gorm.Expr("read_count + ?", 1)).Error
+
+	// 阅读量访问统计加一
+	err = Db.Model(&model.Readdetail{}).Where("article_id = ?", id).Updates(map[string]interface{}{"count": gorm.Expr("count + ?", 1)}).Error
 
 	return
 }
@@ -70,7 +73,9 @@ func (a *SqlArticle) GetArtInfo(id int) (art model.Article, err error) {
 // GetArt 查询文章列表
 func (a *SqlArticle) GetAllArts(pageSize int, pageNum int) (articleList *[]model.Article, total int64, err error) {
 
-	err = Db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("Category").Find(&articleList).Error
+	//err = Db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("Category").Find(&articleList).Error
+
+	err = Db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("left join category on category.id = article.cid").Find(&articleList).Error
 
 	// 单独计数
 	err = Db.Model(&articleList).Count(&total).Error
@@ -83,7 +88,7 @@ func (a *SqlArticle) SearchArticle(title string, pageSize int, pageNum int) (art
 
 	err = Db.Select("article.id,title, img, created_at, updated_at, `desc`, comment_count, read_count, Category.name").
 		Order("Created_At DESC").Joins("Category").
-		Where("title LIKE ?", "%" + title + "%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
+		Where("title LIKE ?", "%"+title+"%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
 
 	//单独计数
 	err = Db.Model(&articleList).Where("title LIKE ?", title+"%").Count(&total).Error

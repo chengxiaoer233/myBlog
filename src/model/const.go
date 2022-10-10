@@ -49,7 +49,7 @@ var Err2Msg = map[int]string{
 	ErrCateNameUsed:  "该分类已存在",
 	ErrCateNotExists: "该分类不存在",
 
-	ErrProfileNotExists : "主页不存在",
+	ErrProfileNotExists: "主页不存在",
 }
 
 // 返回错误信息

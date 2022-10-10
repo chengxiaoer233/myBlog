@@ -341,7 +341,7 @@ export default {
   methods: {
     // 获取用户列表
     async getUserList() {
-      const { data: res } = await this.$http.get('admin/users', {
+      const { data: res } = await this.$http.get('admin/user/users', {
         params: {
           username: this.queryParam.username,
           pagesize: this.queryParam.pagesize,
@@ -363,7 +363,7 @@ export default {
     async searchUser() {
       this.queryParam.pagenum = 1
       this.pagination.current = 1
-      const { data: res } = await this.$http.get('admin/users', {
+      const { data: res } = await this.$http.get('admin/user/users', {
         params: {
           username: this.queryParam.username,
           pagesize: this.queryParam.pagesize,
@@ -396,7 +396,7 @@ export default {
         title: '提示：请再次确认',
         content: '确定要删除该用户吗？一旦删除，无法恢复',
         onOk: async () => {
-          const { data: res } = await this.$http.delete(`user/${id}`)
+          const { data: res } = await this.$http.delete(`admin/user/${id}`)
           if (res.status != 200) return this.$message.error(res.message)
           this.$message.success('删除成功')
           this.getUserList()
@@ -444,7 +444,7 @@ export default {
     editUserOk() {
       this.$refs.addUserRef.validate(async (valid) => {
         if (!valid) return this.$message.error('参数不符合要求，请重新输入')
-        const { data: res } = await this.$http.put(`user/${this.userInfo.id}`, {
+        const { data: res } = await this.$http.put(`admin/user/${this.userInfo.id}`, {
           username: this.userInfo.username,
           role: this.userInfo.role,
         })
